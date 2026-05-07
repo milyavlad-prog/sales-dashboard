@@ -6,380 +6,404 @@
 <title>Sales & Marketing Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #0f1117;
-    --surface: #1a1d27;
-    --surface2: #222536;
-    --border: rgba(255,255,255,0.07);
-    --text: #f0f0f5;
-    --muted: #7b7e99;
-    --blue: #4f7cff;
-    --green: #3ecf8e;
-    --amber: #f5a623;
-    --red: #ff5c5c;
-    --purple: #a78bfa;
-  }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    min-height: 100vh;
-    padding: 24px;
-  }
-
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 28px;
-  }
-
-  .logo { display: flex; align-items: center; gap: 10px; }
-  .logo-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--blue); }
-  h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
-
-  .header-right { display: flex; align-items: center; gap: 12px; }
-
-  #status {
-    font-size: 12px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    background: rgba(62,207,142,0.12);
-    color: var(--green);
-    display: flex; align-items: center; gap: 5px;
-  }
-  #status.loading { background: rgba(245,166,35,0.12); color: var(--amber); }
-  #status.error { background: rgba(255,92,92,0.12); color: var(--red); }
-
-  .refresh-btn {
-    font-size: 12px;
-    padding: 5px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .refresh-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
-
-  .tabs {
-    display: flex; gap: 4px; margin-bottom: 24px;
-    background: var(--surface); padding: 4px;
-    border-radius: 10px; width: fit-content;
-  }
-  .tab {
-    font-size: 13px; padding: 6px 16px; border-radius: 7px;
-    cursor: pointer; border: none; background: transparent;
-    color: var(--muted); transition: all 0.15s;
-  }
-  .tab.active { background: var(--surface2); color: var(--text); }
-
-  .metric-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 12px; margin-bottom: 20px;
-  }
-
-  .metric-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px 18px;
-  }
-  .metric-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
-  .metric-value { font-size: 24px; font-weight: 600; line-height: 1; }
-  .metric-delta { font-size: 12px; margin-top: 5px; }
-  .up { color: var(--green); }
-  .down { color: var(--red); }
-
-  .charts-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px; margin-bottom: 12px;
-  }
-  .chart-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px 18px;
-  }
-  .chart-card.full { grid-column: 1 / -1; }
-  .chart-title { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
-
-  .legend { display: flex; gap: 14px; margin-bottom: 10px; flex-wrap: wrap; }
-  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
-  .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
-
-  #tab-overview, #tab-marketing, #tab-sales { display: none; }
-  #tab-overview.active, #tab-marketing.active, #tab-sales.active { display: block; }
-
-  .empty-state {
-    text-align: center; padding: 60px 20px;
-    color: var(--muted); font-size: 14px;
-  }
-
-  @media (max-width: 600px) {
-    body { padding: 16px; }
-    .charts-grid { grid-template-columns: 1fr; }
-    .chart-card.full { grid-column: 1; }
-  }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;--s1:#1a1d27;--s2:#222536;--bd:rgba(255,255,255,0.07);
+  --tx:#f0f0f5;--mu:#7b7e99;
+  --blue:#4f7cff;--green:#3ecf8e;--amber:#f5a623;--red:#ff5c5c;
+  --purple:#a78bfa;--cyan:#22d3ee;--pink:#f472b6;
+}
+body{background:var(--bg);color:var(--tx);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;padding:20px}
+/* HEADER */
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--bd)}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--blue)}
+h1{font-size:17px;font-weight:600}
+.hdr-right{display:flex;align-items:center;gap:10px}
+#status{font-size:11px;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px}
+.st-ok{background:rgba(62,207,142,.12);color:var(--green)}
+.st-load{background:rgba(245,166,35,.12);color:var(--amber)}
+.st-err{background:rgba(255,92,92,.12);color:var(--red)}
+.rbtn{font-size:12px;padding:5px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--s1);color:var(--mu);cursor:pointer}
+.rbtn:hover{color:var(--tx)}
+/* TABS */
+.tabs{display:flex;gap:3px;margin-bottom:20px;background:var(--s1);padding:4px;border-radius:10px;width:fit-content;flex-wrap:wrap}
+.tab{font-size:12px;padding:5px 14px;border-radius:7px;cursor:pointer;border:none;background:transparent;color:var(--mu);transition:all .15s}
+.tab.active{background:var(--s2);color:var(--tx)}
+/* PLAN BAR */
+.plan-bar-wrap{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:16px 20px;margin-bottom:16px}
+.plan-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.plan-label{font-size:13px;color:var(--mu)}
+.plan-nums{font-size:13px;font-weight:500}
+.plan-track{height:10px;background:var(--s2);border-radius:5px;overflow:hidden}
+.plan-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .6s}
+/* METRIC GRID */
+.mg{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px}
+.mc{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:14px 16px}
+.ml{font-size:11px;color:var(--mu);margin-bottom:6px}
+.mv{font-size:22px;font-weight:600;line-height:1}
+.md{font-size:11px;margin-top:4px}
+.up{color:var(--green)}.dn{color:var(--red)}
+/* CHARTS */
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.cc{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:14px 16px}
+.cc.full{grid-column:1/-1}
+.ct{font-size:12px;color:var(--mu);margin-bottom:10px;font-weight:500}
+.leg{display:flex;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.li{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--mu)}
+.ld{width:8px;height:8px;border-radius:2px}
+/* TICKET BARS */
+.ticket-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.tcard{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:14px}
+.tcard-name{font-size:11px;color:var(--mu);margin-bottom:8px}
+.tcard-val{font-size:20px;font-weight:600;margin-bottom:6px}
+.ttrack{height:6px;background:var(--s2);border-radius:3px;overflow:hidden;margin-bottom:4px}
+.tfill{height:100%;border-radius:3px;transition:width .6s}
+.tpct{font-size:10px;color:var(--mu)}
+/* hidden tabs */
+.tpanel{display:none}.tpanel.active{display:block}
+@media(max-width:600px){.cg{grid-template-columns:1fr}.cc.full{grid-column:1}}
 </style>
 </head>
 <body>
-
-<header>
-  <div class="logo">
-    <div class="logo-dot"></div>
-    <h1>Sales & Marketing Dashboard</h1>
+<div class="hdr">
+  <div class="hdr-left"><div class="dot"></div><h1>Sales & Marketing Dashboard</h1></div>
+  <div class="hdr-right">
+    <div id="status" class="st-load">⏳ Загрузка...</div>
+    <button class="rbtn" onclick="loadData()">↻ Обновить</button>
   </div>
-  <div class="header-right">
-    <div id="status" class="loading">⏳ Загрузка...</div>
-    <button class="refresh-btn" onclick="loadData()">↻ Обновить</button>
-  </div>
-</header>
+</div>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('overview', this)">Обзор</button>
-  <button class="tab" onclick="switchTab('marketing', this)">Маркетинг</button>
-  <button class="tab" onclick="switchTab('sales', this)">Продажи</button>
+  <button class="tab active" onclick="stab('overview',this)">Обзор</button>
+  <button class="tab" onclick="stab('revenue',this)">Выручка</button>
+  <button class="tab" onclick="stab('leads',this)">Лиды</button>
+  <button class="tab" onclick="stab('sales',this)">Продажи</button>
+  <button class="tab" onclick="stab('tickets',this)">Билеты</button>
 </div>
 
 <!-- OVERVIEW -->
-<div id="tab-overview" class="active">
-  <div class="metric-grid">
-    <div class="metric-card">
-      <div class="metric-label">Выручка (посл. месяц)</div>
-      <div class="metric-value" id="m-rev">—</div>
-      <div class="metric-delta" id="d-rev"></div>
+<div id="t-overview" class="tpanel active">
+  <div class="plan-bar-wrap">
+    <div class="plan-top">
+      <span class="plan-label">🎯 Выполнение плана (цель: 110 000 ₽)</span>
+      <span class="plan-nums"><span id="p-rev">—</span> / 110 000 ₽ — <span id="p-pct">—</span></span>
     </div>
-    <div class="metric-card">
-      <div class="metric-label">Лиды</div>
-      <div class="metric-value" id="m-leads">—</div>
-      <div class="metric-delta" id="d-leads"></div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-label">Конверсия</div>
-      <div class="metric-value" id="m-conv">—</div>
-      <div class="metric-delta" id="d-conv"></div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-label">CAC</div>
-      <div class="metric-value" id="m-cac">—</div>
-      <div class="metric-delta" id="d-cac"></div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-label">ROI</div>
-      <div class="metric-value" id="m-roi">—</div>
-      <div class="metric-delta" id="d-roi"></div>
-    </div>
+    <div class="plan-track"><div class="plan-fill" id="p-fill" style="width:0%"></div></div>
   </div>
-
-  <div class="charts-grid">
-    <div class="chart-card full">
-      <div class="chart-title">Выручка по месяцам</div>
-      <div class="legend">
-        <span class="legend-item"><span class="legend-dot" style="background:#4f7cff"></span>Выручка</span>
-      </div>
-      <div style="position:relative;height:200px"><canvas id="c-rev" role="img" aria-label="Выручка по месяцам"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">Лиды & конверсия</div>
-      <div class="legend">
-        <span class="legend-item"><span class="legend-dot" style="background:#3ecf8e"></span>Лиды</span>
-        <span class="legend-item"><span class="legend-dot" style="background:#f5a623;border-radius:50%"></span>Конверсия %</span>
-      </div>
-      <div style="position:relative;height:200px"><canvas id="c-leads" role="img" aria-label="Лиды и конверсия"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">CAC динамика</div>
-      <div class="legend">
-        <span class="legend-item"><span class="legend-dot" style="background:#ff5c5c"></span>CAC (₽)</span>
-      </div>
-      <div style="position:relative;height:200px"><canvas id="c-cac" role="img" aria-label="CAC динамика"></canvas></div>
-    </div>
+  <div class="mg">
+    <div class="mc"><div class="ml">Общая выручка</div><div class="mv" id="ov-rev">—</div><div class="md" id="ov-rev-d"></div></div>
+    <div class="mc"><div class="ml">Лиды сегодня</div><div class="mv" id="ov-leads">—</div><div class="md" id="ov-leads-d"></div></div>
+    <div class="mc"><div class="ml">Сделок сегодня</div><div class="mv" id="ov-deals">—</div><div class="md" id="ov-deals-d"></div></div>
+    <div class="mc"><div class="ml">Конверсия</div><div class="mv" id="ov-conv">—</div><div class="md" id="ov-conv-d"></div></div>
+    <div class="mc"><div class="ml">Средний чек</div><div class="mv" id="ov-avg">—</div><div class="md" id="ov-avg-d"></div></div>
+    <div class="mc"><div class="ml">CAC</div><div class="mv" id="ov-cac">—</div><div class="md" id="ov-cac-d"></div></div>
+    <div class="mc"><div class="ml">Динамика лидов</div><div class="mv" id="ov-dyn">—</div><div class="md" id="ov-dyn-d"></div></div>
+  </div>
+  <div class="cg">
+    <div class="cc full"><div class="ct">Общая выручка по дням</div>
+      <div style="position:relative;height:180px"><canvas id="c-ov-rev" role="img" aria-label="Выручка"></canvas></div></div>
+    <div class="cc"><div class="ct">Лиды по дням</div>
+      <div style="position:relative;height:180px"><canvas id="c-ov-leads" role="img" aria-label="Лиды"></canvas></div></div>
+    <div class="cc"><div class="ct">Сделки & конверсия</div>
+      <div class="leg"><span class="li"><span class="ld" style="background:#3ecf8e"></span>Сделки</span><span class="li"><span class="ld" style="background:#f5a623;border-radius:50%"></span>Конверсия %</span></div>
+      <div style="position:relative;height:160px"><canvas id="c-ov-deals" role="img" aria-label="Сделки"></canvas></div></div>
   </div>
 </div>
 
-<!-- MARKETING -->
-<div id="tab-marketing">
-  <div class="metric-grid">
-    <div class="metric-card"><div class="metric-label">Всего лидов</div><div class="metric-value" id="mk-leads">—</div></div>
-    <div class="metric-card"><div class="metric-label">Ср. конверсия</div><div class="metric-value" id="mk-conv">—</div></div>
-    <div class="metric-card"><div class="metric-label">Ср. CAC</div><div class="metric-value" id="mk-cac">—</div></div>
-    <div class="metric-card"><div class="metric-label">Лучший месяц</div><div class="metric-value" id="mk-best">—</div></div>
+<!-- REVENUE -->
+<div id="t-revenue" class="tpanel">
+  <div class="mg">
+    <div class="mc"><div class="ml">Итого выручка</div><div class="mv" id="rv-total">—</div></div>
+    <div class="mc"><div class="ml">ЕРИП (сумма)</div><div class="mv" id="rv-erip">—</div></div>
+    <div class="mc"><div class="ml">Безнал (сумма)</div><div class="mv" id="rv-beznal">—</div></div>
+    <div class="mc"><div class="ml">Партнёрка (сумма)</div><div class="mv" id="rv-partner">—</div></div>
+    <div class="mc"><div class="ml">Ср. выручка/день</div><div class="mv" id="rv-avg">—</div></div>
   </div>
-  <div class="charts-grid">
-    <div class="chart-card full">
-      <div class="chart-title">Конверсия по месяцам (%)</div>
-      <div style="position:relative;height:230px"><canvas id="c-conv" role="img" aria-label="Конверсия по месяцам"></canvas></div>
-    </div>
+  <div class="cg">
+    <div class="cc full"><div class="ct">Разбивка выручки: ЕРИП / Безнал / Партнёрка</div>
+      <div class="leg">
+        <span class="li"><span class="ld" style="background:#4f7cff"></span>ЕРИП</span>
+        <span class="li"><span class="ld" style="background:#3ecf8e"></span>Безнал</span>
+        <span class="li"><span class="ld" style="background:#f5a623"></span>Партнёрка</span>
+      </div>
+      <div style="position:relative;height:220px"><canvas id="c-rv-split" role="img" aria-label="Разбивка выручки"></canvas></div></div>
+    <div class="cc full"><div class="ct">Накопительная выручка vs план 110 000 ₽</div>
+      <div style="position:relative;height:200px"><canvas id="c-rv-cum" role="img" aria-label="Накопит выручка"></canvas></div></div>
+  </div>
+</div>
+
+<!-- LEADS -->
+<div id="t-leads" class="tpanel">
+  <div class="mg">
+    <div class="mc"><div class="ml">Всего лидов</div><div class="mv" id="ld-total">—</div></div>
+    <div class="mc"><div class="ml">С сайта</div><div class="mv" id="ld-site">—</div></div>
+    <div class="mc"><div class="ml">С бота</div><div class="mv" id="ld-bot">—</div></div>
+    <div class="mc"><div class="ml">С таргета</div><div class="mv" id="ld-target">—</div></div>
+    <div class="mc"><div class="ml">Обработано</div><div class="mv" id="ld-proc">—</div></div>
+    <div class="mc"><div class="ml">Динамика (остаток)</div><div class="mv" id="ld-dyn">—</div></div>
+    <div class="mc"><div class="ml">Ср. стоимость лида</div><div class="mv" id="ld-cost">—</div></div>
+    <div class="mc"><div class="ml">Бюджет таргета</div><div class="mv" id="ld-budget">—</div></div>
+    <div class="mc"><div class="ml">CAC</div><div class="mv" id="ld-cac">—</div></div>
+  </div>
+  <div class="cg">
+    <div class="cc full"><div class="ct">Разбивка лидов: сайт / бот / таргет</div>
+      <div class="leg">
+        <span class="li"><span class="ld" style="background:#4f7cff"></span>Сайт</span>
+        <span class="li"><span class="ld" style="background:#3ecf8e"></span>Бот</span>
+        <span class="li"><span class="ld" style="background:#f5a623"></span>Таргет</span>
+      </div>
+      <div style="position:relative;height:220px"><canvas id="c-ld-split" role="img" aria-label="Разбивка лидов"></canvas></div></div>
+    <div class="cc full"><div class="ct">Динамика лидов (поступило − обработано)</div>
+      <div class="leg">
+        <span class="li"><span class="ld" style="background:#4f7cff"></span>Поступило</span>
+        <span class="li"><span class="ld" style="background:#ff5c5c;border-radius:50%"></span>Не обработано</span>
+      </div>
+      <div style="position:relative;height:200px"><canvas id="c-ld-dyn" role="img" aria-label="Динамика лидов"></canvas></div></div>
   </div>
 </div>
 
 <!-- SALES -->
-<div id="tab-sales">
-  <div class="metric-grid">
-    <div class="metric-card"><div class="metric-label">Общая выручка</div><div class="metric-value" id="sl-total">—</div></div>
-    <div class="metric-card"><div class="metric-label">Ср. выручка/мес</div><div class="metric-value" id="sl-avg">—</div></div>
-    <div class="metric-card"><div class="metric-label">Пик продаж</div><div class="metric-value" id="sl-peak">—</div></div>
-    <div class="metric-card"><div class="metric-label">Месяцев данных</div><div class="metric-value" id="sl-months">—</div></div>
+<div id="t-sales" class="tpanel">
+  <div class="mg">
+    <div class="mc"><div class="ml">Всего сделок</div><div class="mv" id="sl-deals">—</div></div>
+    <div class="mc"><div class="ml">Ср. конверсия</div><div class="mv" id="sl-conv">—</div></div>
+    <div class="mc"><div class="ml">Ср. чек</div><div class="mv" id="sl-avg">—</div></div>
+    <div class="mc"><div class="ml">Бюджет таргета (сумма)</div><div class="mv" id="sl-budget">—</div></div>
+    <div class="mc"><div class="ml">Ср. CAC</div><div class="mv" id="sl-cac">—</div></div>
   </div>
-  <div class="charts-grid">
-    <div class="chart-card full">
-      <div class="chart-title">Выручка по месяцам (столбцы)</div>
-      <div style="position:relative;height:230px"><canvas id="c-revbar" role="img" aria-label="Выручка столбцы"></canvas></div>
+  <div class="cg">
+    <div class="cc"><div class="ct">Сделки по дням</div>
+      <div style="position:relative;height:200px"><canvas id="c-sl-deals" role="img" aria-label="Сделки"></canvas></div></div>
+    <div class="cc"><div class="ct">CAC по дням</div>
+      <div style="position:relative;height:200px"><canvas id="c-sl-cac" role="img" aria-label="CAC"></canvas></div></div>
+    <div class="cc full"><div class="ct">Средний чек по дням</div>
+      <div style="position:relative;height:180px"><canvas id="c-sl-avg" role="img" aria-label="Средний чек"></canvas></div></div>
+  </div>
+</div>
+
+<!-- TICKETS -->
+<div id="t-tickets" class="tpanel">
+  <div class="ticket-grid">
+    <div class="tcard">
+      <div class="tcard-name">🎫 Стандарт</div>
+      <div class="tcard-val" id="tk-s-val">—</div>
+      <div class="ttrack"><div class="tfill" id="tk-s-fill" style="width:0%;background:#4f7cff"></div></div>
+      <div class="tpct" id="tk-s-pct">продано</div>
     </div>
+    <div class="tcard">
+      <div class="tcard-name">🎫 Комфорт</div>
+      <div class="tcard-val" id="tk-c-val">—</div>
+      <div class="ttrack"><div class="tfill" id="tk-c-fill" style="width:0%;background:#3ecf8e"></div></div>
+      <div class="tpct" id="tk-c-pct">продано</div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-name">🎫 Премиум</div>
+      <div class="tcard-val" id="tk-p-val">—</div>
+      <div class="ttrack"><div class="tfill" id="tk-p-fill" style="width:0%;background:#f5a623"></div></div>
+      <div class="tpct" id="tk-p-pct">продано</div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-name">👑 VIP</div>
+      <div class="tcard-val" id="tk-v-val">—</div>
+      <div class="ttrack"><div class="tfill" id="tk-v-fill" style="width:0%;background:#a78bfa"></div></div>
+      <div class="tpct" id="tk-v-pct">продано</div>
+    </div>
+  </div>
+  <div class="cg">
+    <div class="cc full"><div class="ct">Продажи билетов по тарифам (накопительно)</div>
+      <div class="leg">
+        <span class="li"><span class="ld" style="background:#4f7cff"></span>Стандарт</span>
+        <span class="li"><span class="ld" style="background:#3ecf8e"></span>Комфорт</span>
+        <span class="li"><span class="ld" style="background:#f5a623"></span>Премиум</span>
+        <span class="li"><span class="ld" style="background:#a78bfa"></span>VIP</span>
+      </div>
+      <div style="position:relative;height:240px"><canvas id="c-tk-all" role="img" aria-label="Билеты"></canvas></div></div>
   </div>
 </div>
 
 <script>
-const CH = {};
+const CH={};
+const GOAL=110000;
 
-function ff(n) {
-  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
-  if (n >= 1e3) return Math.round(n/1000) + 'K';
-  return Math.round(n).toString();
+function ff(n){if(!n&&n!==0)return'—';n=+n;if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return Math.round(n/1e3)+'K';return Math.round(n).toString();}
+function fc(n){if(!n&&n!==0)return'—';return'₽'+ff(n);}
+function fp(n){if(!n&&n!==0)return'—';return(+n).toFixed(1)+'%';}
+function sum(arr,k){return arr.reduce((s,r)=>s+(+r[k]||0),0);}
+function avg(arr,k){const v=arr.filter(r=>r[k]);return v.length?sum(v,k)/v.length:0;}
+function dlta(a,b,inv){
+  if(!b)return'';
+  const p=Math.round((a-b)/b*100);
+  const good=inv?p<=0:p>=0;
+  return`<span class="${good?'up':'dn'}">${good?'▲':'▼'} ${Math.abs(p)}%</span>`;
 }
-function fc(n) { return '₽' + ff(n); }
-function dlta(a, b, invert) {
-  if (!b) return '';
-  const p = Math.round((a - b) / b * 100);
-  const good = invert ? p <= 0 : p >= 0;
-  return `<span class="${good ? 'up' : 'down'}">${good ? '▲' : '▼'} ${Math.abs(p)}% vs пред. мес.</span>`;
-}
-
-function mkChart(id, type, labels, datasets, extra = {}) {
-  if (CH[id]) CH[id].destroy();
-  CH[id] = new Chart(document.getElementById(id), {
-    type,
-    data: { labels, datasets },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { color: '#7b7e99', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
-        y: { ticks: { color: '#7b7e99', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' } }
-      },
-      ...extra
-    }
+function mkChart(id,type,labels,datasets,extra={}){
+  if(CH[id])CH[id].destroy();
+  CH[id]=new Chart(document.getElementById(id),{
+    type,data:{labels,datasets},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{color:'#7b7e99',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},
+        y:{ticks:{color:'#7b7e99',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}}
+      },...extra}
   });
 }
 
-function render(data) {
-  if (!data || data.length === 0) {
-    document.getElementById('status').textContent = '⚠ Нет данных';
-    document.getElementById('status').className = 'error';
+function render(data){
+  if(!data||!data.length){
+    document.getElementById('status').textContent='⚠ Нет данных';
+    document.getElementById('status').className='st-err';
     return;
   }
+  const n=data.length-1, p=Math.max(n-1,0);
+  const last=data[n], prev=data[p];
+  const labels=data.map(r=>r.date);
 
-  const n = data.length - 1;
-  const p = n > 0 ? n - 1 : 0;
-  const last = data[n];
-  const prev = data[p];
-  const labels = data.map(r => r.date);
-  const roi = r => r.leads && r.cac ? Math.round(r.revenue / (r.leads * r.cac) * 100) : 0;
+  // Накопительная выручка
+  let cumRev=0;
+  const cumRevArr=data.map(r=>{cumRev+=(+r.revenue||0);return cumRev;});
+  const totalRev=cumRevArr[n];
+  const planPct=Math.min(totalRev/GOAL*100,100);
 
-  // Метрики
-  document.getElementById('m-rev').textContent = fc(last.revenue);
-  document.getElementById('d-rev').innerHTML = dlta(last.revenue, prev.revenue, false);
-  document.getElementById('m-leads').textContent = ff(last.leads);
-  document.getElementById('d-leads').innerHTML = dlta(last.leads, prev.leads, false);
-  document.getElementById('m-conv').textContent = last.conversion.toFixed(1) + '%';
-  document.getElementById('d-conv').innerHTML = dlta(last.conversion, prev.conversion, false);
-  document.getElementById('m-cac').textContent = fc(last.cac);
-  document.getElementById('d-cac').innerHTML = dlta(last.cac, prev.cac, true);
-  document.getElementById('m-roi').textContent = roi(last) + '%';
-  document.getElementById('d-roi').innerHTML = dlta(roi(last), roi(prev), false);
+  // PLAN BAR
+  document.getElementById('p-rev').textContent=fc(totalRev);
+  document.getElementById('p-pct').textContent=fp(totalRev/GOAL*100);
+  document.getElementById('p-fill').style.width=planPct+'%';
 
-  // Charts Overview
-  mkChart('c-rev', 'line', labels, [{
-    data: data.map(r => r.revenue),
-    borderColor: '#4f7cff', backgroundColor: 'rgba(79,124,255,0.08)',
-    fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#4f7cff'
-  }]);
+  // OVERVIEW metrics
+  document.getElementById('ov-rev').textContent=fc(last.revenue);
+  document.getElementById('ov-rev-d').innerHTML=dlta(last.revenue,prev.revenue,false);
+  document.getElementById('ov-leads').textContent=ff(last.leads||((+last.leads_site||0)+(+last.leads_bot||0)+(+last.leads_target||0)));
+  const lastLeads=(+last.leads||0)||(+last.leads_site||0)+(+last.leads_bot||0)+(+last.leads_target||0);
+  const prevLeads=(+prev.leads||0)||(+prev.leads_site||0)+(+prev.leads_bot||0)+(+prev.leads_target||0);
+  document.getElementById('ov-leads-d').innerHTML=dlta(lastLeads,prevLeads,false);
+  document.getElementById('ov-deals').textContent=ff(last.deals);
+  document.getElementById('ov-deals-d').innerHTML=dlta(last.deals,prev.deals,false);
+  const lastConv=lastLeads&&last.deals?((+last.deals/lastLeads)*100):0;
+  const prevConv=prevLeads&&prev.deals?((+prev.deals/prevLeads)*100):0;
+  document.getElementById('ov-conv').textContent=fp(lastConv);
+  document.getElementById('ov-conv-d').innerHTML=dlta(lastConv,prevConv,false);
+  const lastAvg=last.deals?(+last.revenue||0)/(+last.deals):0;
+  const prevAvg=prev.deals?(+prev.revenue||0)/(+prev.deals):0;
+  document.getElementById('ov-avg').textContent=fc(lastAvg);
+  document.getElementById('ov-avg-d').innerHTML=dlta(lastAvg,prevAvg,false);
+  const lastCac=last.budget_target&&last.deals?(+last.budget_target)/(+last.deals):0;
+  const prevCac=prev.budget_target&&prev.deals?(+prev.budget_target)/(+prev.deals):0;
+  document.getElementById('ov-cac').textContent=fc(lastCac);
+  document.getElementById('ov-cac-d').innerHTML=dlta(lastCac,prevCac,true);
+  const lastDyn=lastLeads-(+last.processed||0);
+  const prevDyn=prevLeads-(+prev.processed||0);
+  document.getElementById('ov-dyn').textContent=(lastDyn>=0?'+':'')+lastDyn;
+  document.getElementById('ov-dyn-d').innerHTML=dlta(lastDyn,prevDyn,true);
 
-  mkChart('c-leads', 'bar', labels, [
-    { data: data.map(r => r.leads), backgroundColor: 'rgba(62,207,142,0.7)', yAxisID: 'y' },
-    { data: data.map(r => r.conversion), type: 'line', borderColor: '#f5a623',
-      backgroundColor: 'transparent', tension: 0.4, pointRadius: 3, yAxisID: 'y1' }
-  ], {
-    scales: {
-      x: { ticks: { color: '#7b7e99', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
-      y: { position: 'left', ticks: { color: '#7b7e99', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
-      y1: { position: 'right', ticks: { color: '#f5a623', font: { size: 11 } }, grid: { drawOnChartArea: false }, min: 0, max: 20 }
-    }
+  // Overview charts
+  mkChart('c-ov-rev','line',labels,[{data:data.map(r=>+r.revenue||0),borderColor:'#4f7cff',backgroundColor:'rgba(79,124,255,0.07)',fill:true,tension:0.4,pointRadius:3}]);
+  mkChart('c-ov-leads','bar',labels,[{data:data.map(r=>(+r.leads||0)||(+r.leads_site||0)+(+r.leads_bot||0)+(+r.leads_target||0)),backgroundColor:'rgba(79,124,255,0.7)',borderRadius:3}]);
+  mkChart('c-ov-deals','bar',labels,[
+    {data:data.map(r=>+r.deals||0),backgroundColor:'rgba(62,207,142,0.7)',borderRadius:3,yAxisID:'y'},
+    {data:data.map(r=>{const l=(+r.leads||0)||(+r.leads_site||0)+(+r.leads_bot||0)+(+r.leads_target||0);return l&&r.deals?((+r.deals/l)*100):0;}),type:'line',borderColor:'#f5a623',backgroundColor:'transparent',tension:0.4,pointRadius:3,yAxisID:'y1'}
+  ],{scales:{x:{ticks:{color:'#7b7e99',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{position:'left',ticks:{color:'#7b7e99',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y1:{position:'right',ticks:{color:'#f5a623',font:{size:10}},grid:{drawOnChartArea:false},min:0}}});
+
+  // REVENUE tab
+  const tErip=sum(data,'erip'),tBeznal=sum(data,'beznal'),tPartner=sum(data,'partner');
+  document.getElementById('rv-total').textContent=fc(totalRev);
+  document.getElementById('rv-erip').textContent=fc(tErip);
+  document.getElementById('rv-beznal').textContent=fc(tBeznal);
+  document.getElementById('rv-partner').textContent=fc(tPartner);
+  document.getElementById('rv-avg').textContent=fc(Math.round(totalRev/data.length));
+  mkChart('c-rv-split','bar',labels,[
+    {data:data.map(r=>+r.erip||0),backgroundColor:'rgba(79,124,255,0.75)',stack:'s'},
+    {data:data.map(r=>+r.beznal||0),backgroundColor:'rgba(62,207,142,0.75)',stack:'s'},
+    {data:data.map(r=>+r.partner||0),backgroundColor:'rgba(245,166,35,0.75)',stack:'s'}
+  ],{scales:{x:{stacked:true,ticks:{color:'#7b7e99',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{stacked:true,ticks:{color:'#7b7e99',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}}}});
+  const planLine=data.map(()=>GOAL/data.length);
+  mkChart('c-rv-cum','line',labels,[
+    {data:cumRevArr,borderColor:'#4f7cff',backgroundColor:'rgba(79,124,255,0.07)',fill:true,tension:0.4,pointRadius:3,label:'Факт'},
+    {data:data.map((_,i)=>GOAL*(i+1)/data.length),borderColor:'#ff5c5c',borderDash:[6,4],backgroundColor:'transparent',tension:0,pointRadius:0,label:'План'}
+  ]);
+
+  // LEADS tab
+  const tLeads=sum(data,'leads')||data.reduce((s,r)=>s+(+r.leads_site||0)+(+r.leads_bot||0)+(+r.leads_target||0),0);
+  const tSite=sum(data,'leads_site'),tBot=sum(data,'leads_bot'),tTarget=sum(data,'leads_target');
+  const tProc=sum(data,'processed');
+  document.getElementById('ld-total').textContent=ff(tLeads);
+  document.getElementById('ld-site').textContent=ff(tSite);
+  document.getElementById('ld-bot').textContent=ff(tBot);
+  document.getElementById('ld-target').textContent=ff(tTarget);
+  document.getElementById('ld-proc').textContent=ff(tProc);
+  document.getElementById('ld-dyn').textContent='+'+(tLeads-tProc);
+  document.getElementById('ld-cost').textContent=fc(avg(data,'leads_avg_cost'));
+  document.getElementById('ld-budget').textContent=fc(sum(data,'budget_target'));
+  document.getElementById('ld-cac').textContent=fc(avg(data.filter(r=>r.deals&&r.budget_target),r=>r.budget_target/r.deals));
+  mkChart('c-ld-split','bar',labels,[
+    {data:data.map(r=>+r.leads_site||0),backgroundColor:'rgba(79,124,255,0.75)',stack:'s'},
+    {data:data.map(r=>+r.leads_bot||0),backgroundColor:'rgba(62,207,142,0.75)',stack:'s'},
+    {data:data.map(r=>+r.leads_target||0),backgroundColor:'rgba(245,166,35,0.75)',stack:'s'}
+  ],{scales:{x:{stacked:true,ticks:{color:'#7b7e99',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{stacked:true,ticks:{color:'#7b7e99',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}}}});
+  mkChart('c-ld-dyn','bar',labels,[
+    {data:data.map(r=>(+r.leads||0)||(+r.leads_site||0)+(+r.leads_bot||0)+(+r.leads_target||0)),backgroundColor:'rgba(79,124,255,0.6)',borderRadius:3,yAxisID:'y'},
+    {data:data.map(r=>Math.max(0,((+r.leads||0)||(+r.leads_site||0)+(+r.leads_bot||0)+(+r.leads_target||0))-(+r.processed||0))),type:'line',borderColor:'#ff5c5c',backgroundColor:'transparent',tension:0.4,pointRadius:3,yAxisID:'y1'}
+  ],{scales:{x:{ticks:{color:'#7b7e99',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{position:'left',ticks:{color:'#7b7e99',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y1:{position:'right',ticks:{color:'#ff5c5c',font:{size:10}},grid:{drawOnChartArea:false}}}});
+
+  // SALES tab
+  document.getElementById('sl-deals').textContent=ff(sum(data,'deals'));
+  document.getElementById('sl-conv').textContent=fp(avg(data.filter(r=>{const l=(+r.leads||0)||(+r.leads_site||0)+(+r.leads_bot||0)+(+r.leads_target||0);return l&&r.deals;}),r=>{const l=(+r.leads||0)||(+r.leads_site||0)+(+r.leads_bot||0)+(+r.leads_target||0);return(+r.deals/l)*100;}));
+  document.getElementById('sl-avg').textContent=fc(avg(data.filter(r=>r.deals&&r.revenue),r=>(+r.revenue)/(+r.deals)));
+  document.getElementById('sl-budget').textContent=fc(sum(data,'budget_target'));
+  document.getElementById('sl-cac').textContent=fc(avg(data.filter(r=>r.deals&&r.budget_target),r=>(+r.budget_target)/(+r.deals)));
+  mkChart('c-sl-deals','bar',labels,[{data:data.map(r=>+r.deals||0),backgroundColor:data.map((_,i)=>i===n?'#4f7cff':'rgba(79,124,255,0.45)'),borderRadius:3}]);
+  mkChart('c-sl-cac','line',labels,[{data:data.map(r=>r.budget_target&&r.deals?(+r.budget_target)/(+r.deals):null),borderColor:'#ff5c5c',backgroundColor:'rgba(255,92,92,0.06)',fill:true,tension:0.4,pointRadius:3,spanGaps:true}]);
+  mkChart('c-sl-avg','line',labels,[{data:data.map(r=>r.deals&&r.revenue?(+r.revenue)/(+r.deals):null),borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,0.07)',fill:true,tension:0.4,pointRadius:3,spanGaps:true}]);
+
+  // TICKETS tab
+  const tkKeys=[['sold_standart','tk-s','#4f7cff'],['sold_comfort','tk-c','#3ecf8e'],['sold_premium','tk-p','#f5a623'],['sold_vip','tk-v','#a78bfa']];
+  const tkTotals=tkKeys.map(([k])=>sum(data,k));
+  const tkMax=Math.max(...tkTotals,1);
+  tkKeys.forEach(([k,id,color],i)=>{
+    const v=tkTotals[i];
+    document.getElementById(id+'-val').textContent=ff(v);
+    document.getElementById(id+'-fill').style.width=Math.round(v/tkMax*100)+'%';
+    document.getElementById(id+'-pct').textContent=`${ff(v)} продано`;
   });
+  // Накопительные данные по билетам
+  const cumTk={s:[],c:[],p:[],v:[]};
+  let cs=0,cc=0,cp=0,cv=0;
+  data.forEach(r=>{cs+=(+r.sold_standart||0);cc+=(+r.sold_comfort||0);cp+=(+r.sold_premium||0);cv+=(+r.sold_vip||0);cumTk.s.push(cs);cumTk.c.push(cc);cumTk.p.push(cp);cumTk.v.push(cv);});
+  mkChart('c-tk-all','line',labels,[
+    {data:cumTk.s,borderColor:'#4f7cff',backgroundColor:'rgba(79,124,255,0.06)',fill:true,tension:0.4,pointRadius:2},
+    {data:cumTk.c,borderColor:'#3ecf8e',backgroundColor:'rgba(62,207,142,0.06)',fill:true,tension:0.4,pointRadius:2},
+    {data:cumTk.p,borderColor:'#f5a623',backgroundColor:'rgba(245,166,35,0.06)',fill:true,tension:0.4,pointRadius:2},
+    {data:cumTk.v,borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,0.06)',fill:true,tension:0.4,pointRadius:2}
+  ]);
 
-  mkChart('c-cac', 'line', labels, [{
-    data: data.map(r => r.cac),
-    borderColor: '#ff5c5c', backgroundColor: 'rgba(255,92,92,0.06)',
-    fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#ff5c5c'
-  }]);
-
-  // Marketing tab
-  const totalLeads = data.reduce((s, r) => s + r.leads, 0);
-  const avgConv = (data.reduce((s, r) => s + r.conversion, 0) / data.length).toFixed(1);
-  const avgCac = Math.round(data.reduce((s, r) => s + r.cac, 0) / data.length);
-  const bestMonth = data.reduce((a, b) => a.leads > b.leads ? a : b).date;
-  document.getElementById('mk-leads').textContent = ff(totalLeads);
-  document.getElementById('mk-conv').textContent = avgConv + '%';
-  document.getElementById('mk-cac').textContent = fc(avgCac);
-  document.getElementById('mk-best').textContent = bestMonth;
-
-  mkChart('c-conv', 'line', labels, [{
-    data: data.map(r => r.conversion),
-    borderColor: '#a78bfa', backgroundColor: 'rgba(167,139,250,0.08)',
-    fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#a78bfa'
-  }]);
-
-  // Sales tab
-  const totalRev = data.reduce((s, r) => s + r.revenue, 0);
-  document.getElementById('sl-total').textContent = fc(totalRev);
-  document.getElementById('sl-avg').textContent = fc(Math.round(totalRev / data.length));
-  document.getElementById('sl-peak').textContent = data.reduce((a, b) => a.revenue > b.revenue ? a : b).date;
-  document.getElementById('sl-months').textContent = data.length;
-
-  mkChart('c-revbar', 'bar', labels, [{
-    data: data.map(r => r.revenue),
-    backgroundColor: data.map((_, i) => i === n ? '#4f7cff' : 'rgba(79,124,255,0.4)'),
-    borderRadius: 4
-  }]);
-
-  document.getElementById('status').innerHTML = '✓ Данные обновлены';
-  document.getElementById('status').className = '';
+  document.getElementById('status').innerHTML='✓ Данные обновлены';
+  document.getElementById('status').className='st-ok';
 }
 
-async function loadData() {
-  const st = document.getElementById('status');
-  st.innerHTML = '⏳ Загрузка...';
-  st.className = 'loading';
-  try {
-    const res = await fetch('/api/data');
-    const json = await res.json();
-    if (json.error) throw new Error(json.error);
-    render(json.data);
-  } catch (e) {
-    st.innerHTML = '✗ Ошибка: ' + e.message;
-    st.className = 'error';
-    console.error(e);
+async function loadData(){
+  const st=document.getElementById('status');
+  st.innerHTML='⏳ Загрузка...';st.className='st-load';
+  try{
+    const r=await fetch('/api/data');
+    const j=await r.json();
+    if(j.error)throw new Error(j.error);
+    render(j.data);
+  }catch(e){
+    st.innerHTML='✗ '+e.message;st.className='st-err';
   }
 }
 
-function switchTab(name, el) {
-  document.querySelectorAll('[id^="tab-"]').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
+function stab(n,el){
+  document.querySelectorAll('.tpanel').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('t-'+n).classList.add('active');
   el.classList.add('active');
-  setTimeout(() => Object.values(CH).forEach(c => { try { c.update(); } catch(e){} }), 50);
+  setTimeout(()=>Object.values(CH).forEach(c=>{try{c.update()}catch(e){}}),50);
 }
 
 loadData();
-setInterval(loadData, 5 * 60 * 1000); // Auto-refresh every 5 min
+setInterval(loadData,5*60*1000);
 </script>
 </body>
 </html>
