@@ -9,50 +9,39 @@ function getAuth() {
   const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
   return new google.auth.JWT(credentials.client_email, null, credentials.private_key, ['https://www.googleapis.com/auth/spreadsheets.readonly']);
 }
-const FIELD_MAP = {
-  'Дата': 'date',
-  'Лиды': 'leads',
-  'Лиды с сайта': 'leads_site',
-  'Лиды с бота': 'leads_bot',
-  'Лиды с таргета': 'leads_target',
-  'Кол-во': 'chats',
-  'Сделок': 'deals',
-  'Конверсия': 'conversion',
-  'Выручка': 'erip',
-  'Выручка_2': 'beznal',
-  'Выручка_3': 'partner',
-  'Общая': 'revenue',
-  'Средний': 'avg_check',
-  'Бюджет': 'budget_target',
-  'САС': 'cac',
-  'Ср. стоим.': 'leads_avg_cost',
-  'Обработано': 'processed',
-  'Динамика': 'leads_dynamic',
-  '% плана': 'plan_pct',
-  'Билеты': 'sold_standart',
-};
+function excelDateToString(serial) {
+  const d = new Date((serial - 25569) * 86400 * 1000);
+  return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+}
+const COL_KEYS = [
+  'date','leads','leads_site','leads_bot','leads_target','chats','deals','conversion',
+  'erip','beznal','partner','revenue','avg_check','budget_target','cac','leads_avg_cost',
+  'processed','leads_dynamic','plan_pct','sold_standart','sold_comfort','sold_premium','sold_vip'
+];
 app.get('/api/data', async (req, res) => {
   try {
     const auth = getAuth();
     const sheets = google.sheets({ version: 'v4', auth });
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: 'Лист1!A2:W200',
+      range: 'Лист1!A3:W200',
     });
     const rows = response.data.values;
-    if (!rows || rows.length < 2) return res.json({ data: [] });
-    const ruHeaders = rows[0];
-    const headers = ruHeaders.map(h => FIELD_MAP[h] || h);
-    const data = rows.slice(1)
-      .map(row => {
-        const obj = {};
-        headers.forEach((h, i) => {
-          const val = row[i] !== undefined ? row[i] : '';
-          obj[h] = (val !== '' && !isNaN(val)) ? parseFloat(val) : val;
-        });
-        return obj;
-      })
-      .filter(r => r.date && r.date !== '');
+    if (!rows || rows.length < 1) return res.json({ data: [] });
+    const data = rows.map(row => {
+      const obj = {};
+      COL_KEYS.forEach((key, i) => {
+        const raw = row[i] !== undefined ? String(row[i]).trim() : '';
+        if (key === 'date') {
+          const num = parseFloat(raw.replace(',', '.'));
+          obj.date = !isNaN(num) && num > 40000 ? excelDateToString(num) : raw;
+        } else {
+          const cleaned = raw.replace(',', '.').replace(/[^\d.-]/g, '');
+          obj[key] = cleaned !== '' && !isNaN(cleaned) ? parseFloat(cleaned) : 0;
+        }
+      });
+      return obj;
+    }).filter(r => r.date && r.date !== '');
     res.json({ data });
   } catch (err) {
     console.error(err);
